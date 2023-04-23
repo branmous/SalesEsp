@@ -6,7 +6,7 @@ using Sales.Shared.Entities;
 namespace Sales.API.Controllers
 {
     [ApiController]
-    [Route("/api/countries")]
+    [Route("/api/[controller]")]
     public class CountriesController : ControllerBase
     {
         private readonly DataContext _dataContext;
@@ -19,19 +19,29 @@ namespace Sales.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsyc()
         {
-            return Ok(await _dataContext.Countries.ToListAsync());
+            return Ok(await _dataContext.Countries.Include(c => c.States).ToListAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsyc(int id)
         {
-            var country = await _dataContext.Countries.FirstOrDefaultAsync(c => c.Id == id);
+            var country = await _dataContext.Countries.Include(c => c.States).FirstOrDefaultAsync(c => c.Id == id);
             if (country == null)
             {
                 return NotFound();
             }
             return Ok(country);
         }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetFull()
+        {
+            return Ok(await _dataContext.Countries
+                .Include(x => x.States!)
+                .ThenInclude(x => x.Cities)
+                .ToListAsync());
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> PostAsyc(Country country)
