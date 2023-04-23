@@ -2,6 +2,7 @@
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
+@inject IToastService toastService
 
 
 <h3>Paises</h3>
@@ -68,6 +69,7 @@
 
     private async Task DeleteAsync(int id)
     {
+        
         var result = await sweetAlertService.FireAsync(new SweetAlertOptions
             {
                 Title = "Confirmación",
@@ -96,6 +98,7 @@
             return;
         }
 
+        await toastService.Success("País eliminado con exito");
         await LoadAsync();    
     }
 

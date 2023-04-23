@@ -2,6 +2,7 @@
 @inject NavigationManager navigationManager
 @inject IRepository repository
 @inject SweetAlertService sweetAlertService
+@inject IToastService toastService
 
 <h3>CountryEdit</h3>
 
@@ -53,6 +54,7 @@ else
 
         countryForm!.FormPostedSuccessfully = true;
         Return();
+        await toastService.Success("País editado con exito");
     }
 
     private void Return()

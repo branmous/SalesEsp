@@ -2,6 +2,7 @@
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
+@inject IToastService toastService
 
 <h3>Crear País</h3>
 
@@ -24,6 +25,7 @@
 
         countryForm!.FormPostedSuccessfully = true;
         Return();
+        await toastService.Success("País creado con exito");
     }
 
     private void Return()
