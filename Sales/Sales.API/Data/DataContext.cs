@@ -10,6 +10,8 @@ namespace Sales.API.Data
 
         }
 
+        public DbSet<Category> Categories { get; set; }
+
         public DbSet<City> Cities { get; set; }
 
         public DbSet<Country> Countries { get; set; }
@@ -19,9 +21,10 @@ namespace Sales.API.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Category>().HasIndex(c => c.Name).IsUnique();
+            modelBuilder.Entity<City>().HasIndex(c => new { c.Name, c.StateId }).IsUnique();
             modelBuilder.Entity<Country>().HasIndex(c => c.Name).IsUnique();
             modelBuilder.Entity<State>().HasIndex(s => new { s.Name, s.CountryId }).IsUnique();
-            modelBuilder.Entity<City>().HasIndex(c => new { c.Name, c.StateId }).IsUnique();
         }
     }
 }
