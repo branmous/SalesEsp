@@ -19,6 +19,69 @@ namespace Sales.API.Data
 
         private async Task CheckCountriesAsync()
         {
+            if (!_context.Categories.Any())
+            {
+                _context.Categories.Add(new Category
+                {
+                    Name = "Calzado"
+                });
+
+				_context.Categories.Add(new Category
+				{
+					Name = "Ropa"
+				});
+
+				_context.Categories.Add(new Category
+				{
+					Name = "Deportes"
+				});
+
+				_context.Categories.Add(new Category
+				{
+					Name = "Moda"
+				});
+
+				_context.Categories.Add(new Category
+				{
+					Name = "Celulares y accesorios"
+				});
+
+				_context.Categories.Add(new Category
+				{
+					Name = "Dormitorio"
+				});
+
+				_context.Categories.Add(new Category
+				{
+					Name = "Hogar y muebles"
+				});
+
+				_context.Categories.Add(new Category
+				{
+					Name = "Moda y accesorios"
+				});
+
+				_context.Categories.Add(new Category
+				{
+					Name = "Salud y belleza"
+				});
+
+				_context.Categories.Add(new Category
+				{
+					Name = "Ropa infantil"
+				});
+
+				_context.Categories.Add(new Category
+				{
+					Name = "Bebés"
+				});
+
+				_context.Categories.Add(new Category
+				{
+					Name = "Juguetería"
+				});
+			}
+
             if (!_context.Countries.Any())
             {
                 _context.Countries.Add(new Country
@@ -83,6 +146,8 @@ namespace Sales.API.Data
 
             await _context.SaveChangesAsync();
         }
+
+
 
     }
 }
