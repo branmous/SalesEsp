@@ -4,16 +4,13 @@
 @inject SweetAlertService sweetAlertService
 @inject IToastService toastService
 
-<h3>CountryEdit</h3>
+<h3>Country Edit</h3>
 
-@if(country is null)
-{
-    <p>Cargando...</p>
-}
-else
-{
-    <CountryForm @ref="countryForm" Country="country" OnValidSubmit="EditAsync" ReturnAction="Return" />
-}
+<GenericComponent Model="country">
+    <Body>
+        <CountryForm @ref="countryForm" Country="country" OnValidSubmit="EditAsync" ReturnAction="Return" />
+    </Body>
+</GenericComponent>
 
 @code {
     private Country? country;

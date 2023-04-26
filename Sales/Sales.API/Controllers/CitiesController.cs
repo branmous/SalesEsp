@@ -25,12 +25,12 @@ namespace Sales.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsyc(int id)
         {
-            var state = await _dataContext.Cities.FirstOrDefaultAsync(c => c.Id == id);
-            if (state == null)
+            var city = await _dataContext.Cities.FirstOrDefaultAsync(c => c.Id == id);
+            if (city == null)
             {
                 return NotFound();
             }
-            return Ok(state);
+            return Ok(city);
         }
 
         [HttpPost]

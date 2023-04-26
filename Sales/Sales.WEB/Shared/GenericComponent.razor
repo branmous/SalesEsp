@@ -1,0 +1,35 @@
+﻿@typeparam Titem
+
+@if (Model is null)
+{
+    @if (Loading is null)
+    {
+        <div class="align-items-center">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif?20151024034921" />
+        </div>
+    }
+    else
+    {
+        @Loading
+    }
+}
+else
+{
+    @Body
+}
+
+@code {
+    [Parameter]
+    public RenderFragment? Loading { get; set; }
+
+    [Parameter]
+    public RenderFragment? NoRecords { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public RenderFragment Body { get; set; } = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public Titem? Model { get; set; }
+}
