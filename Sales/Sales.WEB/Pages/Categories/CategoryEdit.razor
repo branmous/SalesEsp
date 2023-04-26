@@ -1,0 +1,66 @@
+﻿@page "/categories/edit/{Id:int}"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+@inject IToastService toastService
+
+<h3>Editar Categoría</h3>
+
+<GenericComponent Model="category">
+	<Body>
+		<CategoryForm @ref="categoryForm" Category="category" OnValidSubmit="EditAsync" ReturnAction="Return" />
+	</Body>
+</GenericComponent>
+
+@code {
+	private Category? category;
+	private CategoryForm? categoryForm;
+
+	[Parameter]
+	public int Id { get; set; }
+
+	protected async override Task OnInitializedAsync()
+	{
+		await LoadAsync();
+	}
+
+	public async Task LoadAsync()
+	{
+		var response = await repository.GetAsync<Category>($"/api/categories/{Id}");
+		if (response.Error)
+		{
+			if (response.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+			{
+				navigationManager.NavigateTo("/categories");
+				return;
+			}
+
+			var message = await response.GetErrorMessageAsync();
+			await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+			return;
+
+		}
+
+		category = response.Response;
+	}
+
+	private async Task EditAsync()
+	{
+		var responseHttp = await repository.PutAsync("/api/categories", category);
+		if (responseHttp.Error)
+		{
+			var message = await responseHttp.GetErrorMessageAsync();
+			await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+			return;
+		}
+
+		Return();
+		await toastService.Success("Categoría modificada con éxito");
+	}
+
+	private void Return()
+	{
+		categoryForm!.FormPostedSuccessfully = true;
+		navigationManager.NavigateTo("categories");
+	}
+}

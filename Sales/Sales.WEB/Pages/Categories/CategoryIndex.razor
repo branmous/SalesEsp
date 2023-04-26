@@ -1,42 +1,36 @@
-﻿@page "/countries"
+﻿@page "/categories"
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
 @inject IToastService toastService
 
-
-<h3>Paises</h3>
+<h3>Categorias</h3>
 
 <div class="mb-3">
-    <a class="btn btn-primary" href="/countries/create">Nuevo País</a>
+    <a class="btn btn-primary" href="/categories/create">Nueva Categoría</a>
 </div>
 
-<GenericList MyList="Countries">
+<GenericList MyList="categories">
     <Body>
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>País</th>
-                    <th>Departamentos/Estados</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var country in Countries!)
+                @foreach (var category in categories!)
                 {
                     <tr>
 
                         <td>
-                            @country.Name
-                        </td>
-                        <td>
-                            @country.StatesNumber
+                            @category.Name
                         </td>
 
                         <td>
-                            <a href="/countries/details/@country.Id" class="btn btn-info">Detalles</a>
-                            <a href="/countries/edit/@country.Id" class="btn btn-warning">Editar</a>
-                            <button class="btn btn-danger" @onclick=@(() => DeleteAsync(country.Id))>Borrar</button>
+                            <a href="/categories/edit/@category.Id" class="btn btn-warning">Editar</a>
+                            <button class="btn btn-danger" @onclick=@(() => DeleteAsync(category.Id))>Borrar</button>
 
                         </td>
                     </tr>
@@ -47,27 +41,28 @@
 </GenericList>
 
 @code {
-    public List<Country>? Countries { get; set; }
 
-    protected async override Task OnInitializedAsync()
+    private List<Category>? categories;
+
+    protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
     }
 
-    private async Task LoadAsync()
+    public async Task LoadAsync()
     {
-        var responseHppt = await repository.GetAsync<List<Country>>("api/countries");
-        if (responseHppt.Error)
+        var response = await repository.GetAsync<List<Category>>("/api/categories");
+        if (response.Error)
         {
-            var messageError = await responseHppt.GetErrorMessageAsync();
-            await sweetAlertService.FireAsync("Error", messageError, SweetAlertIcon.Error);
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
             return;
         }
 
-        Countries = responseHppt.Response;
+        categories = response.Response;
     }
 
-    private async Task DeleteAsync(int id)
+    public async Task DeleteAsync(int id)
     {
         var result = await sweetAlertService.FireAsync(new SweetAlertOptions
             {
@@ -83,24 +78,22 @@
             return;
         }
 
-        var responseHTTP = await repository.DeleteAsync($"api/countries/{id}");
+        var responseHTTP = await repository.DeleteAsync($"api/categories/{id}");
         if (responseHTTP.Error)
         {
             if (responseHTTP.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
                 navigationManager.NavigateTo("/");
                 return;
-            }   
-                
+            }
+
             var mensajeError = await responseHTTP.GetErrorMessageAsync();
             await sweetAlertService.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
             return;
         }
 
-        await toastService.Success("País eliminado con exito");
-        await LoadAsync();    
+        await toastService.Success("Categoría eliminada con exito");
+        await LoadAsync();
     }
 
-
 }
-
