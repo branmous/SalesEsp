@@ -10,6 +10,11 @@
     <a class="btn btn-primary" href="/categories/create">Nueva Categoría</a>
 </div>
 
+<Pagination CurrentPage="currentPage"
+            TotalPages="totalPages"
+            SelectedPage="SelectedPage" />
+
+
 <GenericList MyList="categories">
     <Body>
         <table class="table table-striped">
@@ -43,15 +48,20 @@
 @code {
 
     private List<Category>? categories;
+    private int currentPage = 1;
+    private int totalPages;
+
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadTotalPages();
         await LoadAsync();
     }
 
-    public async Task LoadAsync()
+    public async Task LoadAsync(int page = 1)
     {
-        var response = await repository.GetAsync<List<Category>>("/api/categories");
+        var url = $"/api/categories?page={page}";
+        var response = await repository.GetAsync<List<Category>>(url);
         if (response.Error)
         {
             var message = await response.GetErrorMessageAsync();
@@ -61,6 +71,27 @@
 
         categories = response.Response;
     }
+
+    public async Task LoadTotalPages()
+    {
+        var url = $"/api/categories/getPages";
+        var response = await repository.GetAsync<int>(url);
+        if (response.Error)
+        {
+            var message = await response.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+
+        totalPages = response.Response;
+    }
+
+    private async Task SelectedPage(int page)
+    {
+        currentPage = page;
+        await LoadAsync(page);
+    }
+
 
     public async Task DeleteAsync(int id)
     {
@@ -94,6 +125,7 @@
 
         await toastService.Success("Categoría eliminada con exito");
         await LoadAsync();
+        await LoadTotalPages();
     }
 
 }
