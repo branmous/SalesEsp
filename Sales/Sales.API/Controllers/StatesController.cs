@@ -21,15 +21,14 @@ namespace Sales.API.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetAsyc([FromQuery] PaginationDTO pagination)
 		{
-			var queryable = _dataContext.States.Include(c => c.Cities).Where(x => x.Country!.Id == pagination.Id).Paginate(pagination);
+			var queryable = _dataContext.States.Include(c => c.Cities).Where(x => x.Country!.Id == pagination.Id);
 
 			if (!string.IsNullOrWhiteSpace(pagination.Filter))
 			{
 				queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
 			}
 
-
-			return Ok(await queryable.ToListAsync());
+			return Ok(await queryable.OrderBy(s => s.Name).Paginate(pagination).ToListAsync());
 		}
 
 		[HttpGet("{id}")]
